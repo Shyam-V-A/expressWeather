@@ -1,4 +1,4 @@
-console.log("client javascript file is loading")
+// console.log("client javascript file is loading")
 
 
 const weatherForm = document.querySelector('form')

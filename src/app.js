@@ -1,6 +1,8 @@
 const express = require('express')
 const path = require('path')
 const hbs = require('hbs')
+const geoCode = require('./utils/geoCode')
+const weather = require('./utils/weather')
 
 //console.log(path.join(__dirname,'../public'))
 
@@ -63,14 +65,80 @@ app.get('/help',(req,res) => {
 //     }])
 // })
 
+// app.get('/weather',(req,res) => {
+//     res.send(['<h1>welcome to weather service</h1>',[
+//         {
+//             location: 'Bengaluru',
+//             temp: 28
+//         }
+//     ]])
+// })
+
 app.get('/weather',(req,res) => {
-    res.send(['<h1>welcome to weather service</h1>',[
-        {
-            location: 'Bengaluru',
-            temp: 28
+    if(!req.query.address){
+        return res.send({
+            error: "you must provide an address"
+        })
+    }
+
+    // res.send(['<h1>welcome to weather service</h1>',
+    //     [
+    //         {
+    //             location: req.query.address,
+    //             temp: 28
+    //         }
+    //     ]
+    // ])
+
+    geoCode(req.query.address, (error, {longitude,latitude,location} = {})=> {
+
+        if(error){
+            return res.send({ error})
         }
-    ]])
+        else{
+            
+            //console.log('data : ',data.location)
+            //console.log('data : ',location)
+
+            //weather(data.longitude,data.latitude,(error,data) => {
+            weather(longitude,latitude,(error,forecast) => {
+
+                if(error){
+                    return res.send({
+                        error,
+                        location
+                    })
+                }
+                else{
+                    return res.send({
+                        forecast,
+                        address: req.query.address,
+                        location,
+                        latitude,
+                        longitude
+                    })
+                }
+            })
+            
+        }
+    })
+
 })
+
+app.get('/products',(req,res) => {
+    if(!req.query.search){
+        return res.send({
+            error: "you must provide a search term"
+        })
+    }
+
+    console.log(req.query.search)
+    res.send({
+        products: []
+    })
+})
+
+
 app.get('/help/*', (req, res) => {
     res.render('404', {
         title: '404',

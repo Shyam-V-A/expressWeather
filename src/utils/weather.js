@@ -42,7 +42,8 @@ const weather = (latitude,longitude, callBack) => {
                 if(data.error){
                     callBack(data.error.code +"   "+  data.error.message,undefined)
                 }else{
-                    callBack(undefined,"it is currently " +  data.current.temp_c + " degree centigrade, but it feels like " + data.current.feelslike_c + " degree centigrade")
+
+                    callBack(undefined,"it is currently " +  data.current.temp_c + " degree centigrade, but it feels like " + data.current.feelslike_c + " degree centigrade"+ "\n The current Humidity is " + data.current.humidity + "%");
                 //console.log(data)
                 }
             }
